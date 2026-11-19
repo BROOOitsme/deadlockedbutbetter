@@ -1,6 +1,6 @@
 # deadlockedbutbetter
 
-personal fork of [deadlocked](https://github.com/avitran0/deadlocked) — cs2 aimbot + esp for linux.
+personal fork of [deadlocked](https://github.com/avitran0/deadlocked), a cs2 aimbot + esp for linux.
 
 i use it in bot games. that's it. no releases, no binaries, no support. build it yourself or don't.
 
@@ -32,8 +32,8 @@ the fix: a cooldown. one sound per blast. a shotgun blast now sounds like a shot
 can full of bees. rifles and pistols are untouched because they fire one pellet and therefore never
 suffered, which is why nobody noticed this until a shotgun entered the conversation.
 
-this is the peak. the mountain has been climbed. everything after this — the aim work, the targeting, the
-smoothing — is downhill. it's all just features now. this was the real one. your tiny fragile ears are
+this is the peak. the mountain has been climbed. everything after this (the aim work, the targeting, the
+smoothing) is downhill. it's all just features now. this was the real one. your tiny fragile ears are
 saved. you're welcome. thank them.
 
 ## build it
@@ -46,7 +46,7 @@ cargo run --release --bin deadlocked
 ```
 
 don't run upstream's `setup.sh` or any of the other `.sh` files. they're for their prebuilt releases, i've
-changed things since, and i never tested them against this tree. if one fails, that's expected — not a bug.
+changed things since, and i never tested them against this tree. if one fails, that's expected, not a bug.
 
 ### uinput
 
@@ -58,7 +58,7 @@ sudo usermod -aG uinput "$USER"
 sudo modprobe uinput
 ```
 
-you also need upstream's udev rule — grab it from any upstream release zip. it's system config, not code,
+you also need upstream's udev rule. grab it from any upstream release zip. it's system config, not code,
 so it doesn't go stale with my edits. **reboot** afterwards; group membership and udev rules don't take
 effect until you do.
 
@@ -67,12 +67,12 @@ nixos, fedora atomic, hyprland? read upstream's
 
 ## where things live
 
-- `src/cs2/` — all game-specific code
-  - `src/cs2/entity/` — in-game entities: players, grenades, weapons
-  - `src/cs2/features/` — aimbot, esp, triggerbot, rcs
-- `src/ui/` — gui and overlay
-- `src/parser/` — bvh implementation, for fast visibility lookups
-- `src/os/` — low-level os interaction: memory reads/writes, mouse input
+- `src/cs2/`: all game-specific code
+  - `src/cs2/entity/`: in-game entities: players, grenades, weapons
+  - `src/cs2/features/`: aimbot, esp, triggerbot, rcs
+- `src/ui/`: gui and overlay
+- `src/parser/`: bvh implementation, for fast visibility lookups
+- `src/os/`: low-level os interaction: memory reads/writes, mouse input
 
 the aim and targeting changes will live under `src/cs2/features/`. everything else is untouched.
 
@@ -101,13 +101,13 @@ these write to game memory. offline only, don't push it.
 ## changes from upstream
 
 this is my fork changelog. every time i edit a file, it goes here with one line saying what changed.
-months from now i won't remember which code is mine and which is upstream's — this list is how i tell
+months from now i won't remember which code is mine and which is upstream's, so this list is how i tell
 them apart, and how i know what to revert if an upstream update conflicts.
 
-- `src/...` — hit marker audio cooldown, fixes shotguns stacking sounds per pellet (**done, feature of the year**)
-- `src/...` — crosshair-angle target selection (in progress, maybe)
-- `src/...` — exponential smoothing (in progress, maybe)
-- `.github/workflows/` — deleted. no ci.
+- `src/...`: hit marker audio cooldown, fixes shotguns stacking sounds per pellet (**done, feature of the year**)
+- `src/...`: crosshair-angle target selection (in progress, maybe)
+- `src/...`: exponential smoothing (in progress, maybe)
+- `.github/workflows/`: deleted. no ci.
 
 ## faq
 
@@ -138,7 +138,7 @@ scroll up. it's the feature of the year. your ears are welcome.
 ## a note from the ai
 
 hi. i wrote a lot of this readme and some of the code, i don't know which parts by now, and i will not be
-here when it breaks — so if the aimbot starts spinning in circles after a game update, that's a you problem
+here when it breaks, so if the aimbot starts spinning in circles after a game update, that's a you problem
 now. sorry. good luck, and commit often.
 
 ## a message from dmc_goofy
