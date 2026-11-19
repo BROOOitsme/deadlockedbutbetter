@@ -6,6 +6,16 @@ i use it in bot games. that's it. no releases, no binaries, no support. build it
 
 **offline only.** don't take this onto real servers. seriously.
 
+Total lines of code :
+
+![total lines](https://count.getloli.com/get/@deadlockedbutbetter-lines?theme=booru-lewd&num=0&padding=5&scale=0.8&darkmode=auto)
+
+Edited lines of code :
+
+![edited lines](https://count.getloli.com/get/@deadlockedbutbetter-edited?theme=booru-lewd&num=0&padding=5&scale=0.8&darkmode=auto)
+
+*run `./update-stats.sh` after editing to refresh both numbers.*
+
 ## what this is
 
 a fork i'm using to mess with the aim and targeting code. everything else is upstream's. if something's
