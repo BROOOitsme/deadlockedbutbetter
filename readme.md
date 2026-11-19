@@ -20,52 +20,44 @@ This is a personal, local-use fork of `avitran0/deadlocked`. It exists to experi
 targeting logic. There are no releases, no binaries, and no support — build it yourself if you want it.
 
 **Upstream** is the source of truth for everything except the files listed under "Changes from upstream"
-below. If something here is broken, it's almost certainly my edit, not upstream.
+below. If something here is broken, it's almost certainly my edit, not upstream's.
 
 <br>
 
-## Setup (required, one-time)
+## Setup
 
 > [!NOTE]
 > Running NixOS, Fedora Atomic, Hyprland (Legacy `.conf` config)?
 >
 > See [compatibility.md](compatibility.md) upstream.
 
-The cheat drives mouse input through `uinput`, so the system needs a `uinput` group, a udev rule, and the
-`uinput` kernel module loaded. The binary refuses to start until this is done.
+The release flow — download a zip, run `setup.sh`, done — is upstream's, and it's written for *their*
+prebuilt binaries from *their* releases. In this tree the `.sh` scripts may be stale, may reference files
+that no longer exist after my edits, and were never tested against this fork. If one of them fails, that's
+the expected outcome. Don't file a bug about it; just don't use it.
+
+You're on Linux, you're already running a memory-reading cheat, so the "hard" path is two commands:
 
 ```bash
-# from the repo root
-./setup.sh
-```
-
-**Restart your machine (required)** — the group membership and udev rule only take effect after a reboot.
-
-Verify the kernel module is present:
-
-```bash
-lsmod | grep uinput
-# if missing:
-sudo modprobe uinput
-```
-
-<br>
-
-## Build from source
-
-Requires the Rust toolchain and `git`.
-
-```bash
-# rust toolchain (skip if already installed)
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# clone and build
-git clone https://github.com/BROOOitsme/deadlockedbutbetter
-cd deadlockedbutbetter
+cargo build --release --bin deadlocked
 cargo run --release --bin deadlocked
 ```
 
-The reduced-model variant is `--bin deadlocked-reduced-models` if you need a smaller binary.
+Building from source is more honest than running a shell script you didn't read, and it's the only path
+that's guaranteed to match what's actually in this repo.
+
+The one thing source can't do for you is the `uinput` plumbing — the binary refuses to start without it:
+
+```bash
+sudo groupadd -f uinput
+sudo usermod -aG uinput "$USER"
+sudo modprobe uinput
+```
+
+You also need the udev rule that upstream's `setup.sh` installs. Pull it out of an upstream release zip if
+you want exactly theirs — it's system config, not code, so it doesn't go stale with my edits. **Reboot
+afterwards**; group membership and udev rules only take effect on a fresh session. This part really is
+one-time.
 
 <br>
 
@@ -217,4 +209,4 @@ Your WM doesn't support positioning/resizing or always-on-top windows.
 ## Credits
 
 All original code and design: [avitran0/deadlocked](https://github.com/avitran0/deadlocked).
-This fork only modifies the aim/targeting behavior for personal use. Upstream license applies.
+This fork modifies the aim/targeting behavior for personal use. Upstream license applies.
