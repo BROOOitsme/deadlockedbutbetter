@@ -1,52 +1,31 @@
-<div align="center">
-
 # deadlockedbutbetter
 
-[![Fork of avitran0/deadlocked](https://img.shields.io/badge/fork%20of-avitran0%2Fdeadlocked-blue?style=for-the-badge)](https://github.com/avitran0/deadlocked)
+personal fork of [deadlocked](https://github.com/avitran0/deadlocked) — cs2 aimbot + esp for linux.
 
-<br>
+i use it in bot games. that's it. no releases, no binaries, no support. build it yourself or don't.
 
-personal fork of [deadlocked](https://github.com/avitran0/deadlocked) — a simple CS2 aimbot and ESP for Linux.
+**offline only.** don't take this onto real servers. seriously.
 
-tuned for offline / bot games. built from source, not distributed as a release.
+## what this is
 
-</div>
+a fork i'm using to mess with the aim and targeting code. everything else is upstream's. if something's
+broken it's probably my edit, not theirs.
 
-<br>
+## build it
 
-## About this fork
-
-This is a personal, local-use fork of `avitran0/deadlocked`. It exists to experiment with the aim and
-targeting logic. There are no releases, no binaries, and no support — build it yourself if you want it.
-
-**Upstream** is the source of truth for everything except the files listed under "Changes from upstream"
-below. If something here is broken, it's almost certainly my edit, not upstream's.
-
-<br>
-
-## Setup
-
-> [!NOTE]
-> Running NixOS, Fedora Atomic, Hyprland (Legacy `.conf` config)?
->
-> See [compatibility.md](compatibility.md) upstream.
-
-The release flow — download a zip, run `setup.sh`, done — is upstream's, and it's written for *their*
-prebuilt binaries from *their* releases. In this tree the `.sh` scripts may be stale, may reference files
-that no longer exist after my edits, and were never tested against this fork. If one of them fails, that's
-the expected outcome. Don't file a bug about it; just don't use it.
-
-You're on Linux, you're already running a memory-reading cheat, so the "hard" path is two commands:
+linux and rust. that's the whole list.
 
 ```bash
 cargo build --release --bin deadlocked
 cargo run --release --bin deadlocked
 ```
 
-Building from source is more honest than running a shell script you didn't read, and it's the only path
-that's guaranteed to match what's actually in this repo.
+don't run upstream's `setup.sh` or any of the other `.sh` files. they're for their prebuilt releases, i've
+changed things since, and i never tested them against this tree. if one fails, that's expected — not a bug.
 
-The one thing source can't do for you is the `uinput` plumbing — the binary refuses to start without it:
+### uinput
+
+the binary won't start without this. one-time, then reboot.
 
 ```bash
 sudo groupadd -f uinput
@@ -54,159 +33,85 @@ sudo usermod -aG uinput "$USER"
 sudo modprobe uinput
 ```
 
-You also need the udev rule that upstream's `setup.sh` installs. Pull it out of an upstream release zip if
-you want exactly theirs — it's system config, not code, so it doesn't go stale with my edits. **Reboot
-afterwards**; group membership and udev rules only take effect on a fresh session. This part really is
-one-time.
+you also need upstream's udev rule — grab it from any upstream release zip. it's system config, not code,
+so it doesn't go stale with my edits. **reboot** afterwards; group membership and udev rules don't take
+effect until you do.
 
-<br>
+nixos, fedora atomic, hyprland? read upstream's
+[compatibility.md](https://github.com/avitran0/deadlocked/blob/main/compatibility.md). i can't help with those.
 
-## Features
+## where things live
 
-Everything below is inherited from upstream unless noted in "Changes from upstream".
+- `src/cs2/` — all game-specific code
+  - `src/cs2/entity/` — in-game entities: players, grenades, weapons
+  - `src/cs2/features/` — aimbot, esp, triggerbot, rcs
+- `src/ui/` — gui and overlay
+- `src/parser/` — bvh implementation, for fast visibility lookups
+- `src/os/` — low-level os interaction: memory reads/writes, mouse input
 
-### Aimbot
-- Hotkey
-- FOV
-- Smooth
-- Start bullet
-- Targeting mode
-- Visibility check (VPK parsing)
-- Head only / whole body
-- Flash check
-- FOV circle
+the aim and targeting changes will live under `src/cs2/features/`. everything else is untouched.
 
-### ESP
-- Hotkey
-- Box
-- Skeleton
-- Health bar
-- Armor bar
-- Player name
-- Weapon icon
-- Player tags (helmet, defuser, bomb)
-- Dropped weapons
-- Bomb timer
+## what it does
 
-### Triggerbot
-- Activation mode
-- Min/max delay
-- Additional duration
-- Visibility check
-- Flash check
-- Scope check
-- Velocity threshold
-- Head only mode
+inherited from upstream unless it's in the changes list.
 
-### Standalone RCS
-- Smoothing
+- **aimbot:** hotkey, fov, smoothing, start bullet, targeting mode, visibility check, head-only/whole-body, flash check, fov circle
+- **esp:** hotkey, box, skeleton, health/armor bars, names, weapon icons, tags, dropped weapons, bomb timer
+- **triggerbot:** activation mode, min/max delay, extra duration, visibility/flash/scope checks, velocity threshold, head-only
+- **rcs:** standalone, with smoothing
+- **per-weapon overrides:** aimbot, triggerbot, rcs
+- **web radar:** follow player, shareable ([upstream faq](https://github.com/avitran0/deadlocked/blob/main/radar.md))
+- **misc:** sniper crosshair, grenade lineup alignment
 
-### Per-weapon overrides
-- Aimbot
-- Triggerbot
-- RCS
+### unsafe
 
-### Web radar
-- Web radar
-- Follow player
-- Shareable
+these write to game memory. offline only, don't push it.
 
-### Misc
-- Sniper crosshair
-- Bomb timer
-- Grenade lineup alignment
-- Web radar ([FAQ](radar.md))
+- no flash (max flash alpha)
+- fov changer
+- no smoke
+- smoke color
 
-### Unsafe
-> [!WARNING]
-> These features write to game memory and might get you banned.
-> In a bot game there's no VAC risk in practice, but treat them as offline-only regardless.
+## changes from upstream
 
-- No flash (with max flash alpha)
-- FOV changer
-- No smoke
-- Smoke color change
+this is my fork changelog. every time i edit a file, it goes here with one line saying what changed.
+months from now i won't remember which code is mine and which is upstream's — this list is how i tell
+them apart, and how i know what to revert if an upstream update conflicts.
 
-<br>
+- `src/...` — crosshair-angle target selection (in progress, maybe)
+- `src/...` — exponential smoothing (in progress, maybe)
+- `.github/workflows/` — deleted. no ci.
 
-## Changes from upstream
+## faq
 
-*(keep this list updated as you edit — it's the whole point of a fork)*
+**where are my configs?**
+`$XDG_CONFIG_HOME`, falling back to `$HOME/.config`, falling back to next to the executable.
 
-- `src/...` — crosshair-angle target selection (planned / in progress)
-- `src/...` — exponential smoothing step (planned / in progress)
-- `.github/workflows/` — removed (no CI on this fork)
+**which desktops work?**
+best: gnome, kde. good: sway, weston. fair: i3, openbox, xfce, hyprland (needs tweaks).
 
-<br>
+**hyprland is broken**
+yeah. bad x11 support for what this does. use something else.
 
-## FAQ
+**gamescope overlay is tiny**
+game thinks it's 16:9. don't use gamescope.
 
-<details>
-<summary>Where are my configs saved?</summary>
+**overlay is black**
+compositor has no transparency. on kde: display and monitor → compositor → enable on startup.
 
-`$XDG_CONFIG_HOME`, falling back to `$HOME/.config`. If neither is set, they're saved alongside the executable.
+**overlay shows but i can't click anything**
+click-through failed. wm/compositor limitation.
 
-</details>
+**overlay isn't showing or isn't on top**
+your wm doesn't do positioning or always-on-top.
 
-<br>
+## a note from the ai
 
-<details>
-<summary>Which desktop environments and window managers are supported?</summary>
+hi. i wrote a lot of this readme and some of the code, i don't know which parts by now, and i will not be
+here when it breaks — so if the aimbot starts spinning in circles after a game update, that's a you problem
+now. sorry. good luck, and commit often.
 
-**Best:** GNOME (Mutter), KDE (KWin)
-**Good:** SwayWM, Weston
-**Fair:** i3, OpenBox, XFCE, Hyprland (tweaks may be needed; see [compatibility.md](compatibility.md/#hyprland))
+## credits
 
-</details>
-
-<br>
-
-<details>
-<summary>I'm using Hyprland and something doesn't work</summary>
-
-Hyprland has poor X11 support for the techniques this cheat uses. Try another WM if possible.
-
-</details>
-
-<br>
-
-<details>
-<summary>I'm using Gamescope and the overlay is too small</summary>
-
-The game still thinks it's running at 16:9, so the cheat reads the wrong window resolution. Run without Gamescope.
-
-</details>
-
-<br>
-
-<details>
-<summary>My screen/overlay is black</summary>
-
-Your compositor doesn't support transparency, or it's disabled. On KDE: **Display and Monitor → Compositor → Enable compositor on startup**.
-
-</details>
-
-<br>
-
-<details>
-<summary>The overlay shows but I can't click anything</summary>
-
-Click-through failed — window manager/compositor limitation.
-
-</details>
-
-<br>
-
-<details>
-<summary>The overlay doesn't show up / isn't on top</summary>
-
-Your WM doesn't support positioning/resizing or always-on-top windows.
-
-</details>
-
-<br>
-
-## Credits
-
-All original code and design: [avitran0/deadlocked](https://github.com/avitran0/deadlocked).
-This fork modifies the aim/targeting behavior for personal use. Upstream license applies.
+everything original is [avitran0/deadlocked](https://github.com/avitran0/deadlocked). upstream is gpl-3.0,
+so this fork is too. license terms win over anything i've written here.
